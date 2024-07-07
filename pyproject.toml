@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "apielectionissues"
+version = "0.1.0"
+description = ""
+authors = ["Jackson Severino da Rocha <jackson.severino.rocha@escola.pr.gov.br>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.111.0"
+uvicorn = "^0.30.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
