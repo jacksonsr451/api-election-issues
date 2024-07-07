@@ -4,7 +4,13 @@ version = "0.1.0"
 description = ""
 authors = ["Jackson Severino da Rocha <jackson.severino.rocha@escola.pr.gov.br>"]
 readme = "README.md"
-packages = [{include = "api"}]
+packages = [
+    {include = "api"},
+    {include = "application"},
+    {include = "domain"},
+    {include = "infrastructure"},
+    {include = "interfaces"},
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
