@@ -4,7 +4,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 
-from application.auth.schemas.user_schema import UserSchema, UserCreate, UserUpdate
+from application.auth.schemas.user_schema import UserSchema, UserCreate, UserUpdate, UpdateUserPassword
 from application.auth.services.user_service import UserService
 
 from application.auth.adapters.user_service_factory import get_user_service
@@ -33,7 +33,7 @@ async def get_users(service: UserService = Depends(get_user_service)) -> JSONRes
     summary='Get a specific user',
     response_model=UserSchema,
 )
-async def get_user(user_id: int, service: UserService = Depends(get_user_service)) -> JSONResponse:
+async def get_user(user_id: str, service: UserService = Depends(get_user_service)) -> JSONResponse:
     try:
         user = service.get_user(user_id)
         return JSONResponse(content=user, status_code=200)
@@ -61,9 +61,23 @@ async def create_user(data: UserCreate, service: UserService = Depends(get_user_
     summary='Update a user',
     response_model=UserSchema,
 )
-async def update_user(user_id: int, data: UserUpdate, service: UserService = Depends(get_user_service)) -> JSONResponse:
+async def update_user(user_id: str, data: UserUpdate, service: UserService = Depends(get_user_service)) -> JSONResponse:
     try:
         user = await service.update_user(user_id, data)
+        return JSONResponse(content=user, status_code=200)
+    except Exception as e:
+        logger.error(f"Error updating user: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update user") from e
+
+
+@user_router.put(
+    '/users/{user_id}',
+    summary='Update password of a user',
+    response_model=UserSchema,
+)
+async def update_user_password(user_id: str, data: UpdateUserPassword, service: UserService = Depends(get_user_service)) -> JSONResponse:
+    try:
+        user = service.update_password(user_id, data)
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
         logger.error(f"Error updating user: {str(e)}")
@@ -74,7 +88,7 @@ async def update_user(user_id: int, data: UserUpdate, service: UserService = Dep
     '/users/{user_id}',
     summary='Delete a user',
 )
-async def delete_user(user_id: int, service: UserService = Depends(get_user_service)) -> JSONResponse:
+async def delete_user(user_id: str, service: UserService = Depends(get_user_service)) -> JSONResponse:
     try:
         service.delete_user(user_id)
         return JSONResponse(content={'message': 'User has been deleted!'}, status_code=200)
