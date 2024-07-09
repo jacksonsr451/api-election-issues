@@ -21,6 +21,7 @@ sqlalchemy-utils = "^0.41.2"
 alembic = "^1.13.2"
 python-decouple = "^3.8"
 psycopg2-binary = "^2.9.9"
+pwdlib = {extras = ["argon2"], version = "^0.2.0"}
 
 
 [build-system]

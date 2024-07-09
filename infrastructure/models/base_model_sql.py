@@ -86,10 +86,6 @@ class BaseModelSQL(Base):
         return result
 
     def to_schema(self, schema: BaseDataModel) -> BaseDataModel:
-        """
-
-        :type schema: BaseDataModel
-        """
         model_dict = self.to_dict()
         return schema(**model_dict)
 
