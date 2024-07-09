@@ -1,7 +1,5 @@
 from typing import List
 
-from fastapi import Depends
-
 from infrastructure.models.users_model import UsersModel
 from infrastructure.repositories.user_repository import UserRepository
 from application.auth.schemas.user_schema import UserCreate, UserUpdate, UpdateUserPassword, UserSchema
@@ -9,7 +7,7 @@ from domain.auth.services.user_service_domain import UserServiceDomain
 
 
 class UserService:
-    def __init__(self, repository: UserRepository = Depends(UserRepository)):
+    def __init__(self, repository: UserRepository):
         self.__repository = repository
 
     def create_user(self, user: UserCreate) -> UserSchema:

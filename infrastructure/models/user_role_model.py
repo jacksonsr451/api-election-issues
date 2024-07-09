@@ -1,10 +1,10 @@
-from sqlalchemy import Column, UUID, ForeignKey
+from sqlalchemy import Column, UUID, ForeignKey, Table
 
 from infrastructure.models.base_model_sql import BaseModelSQL
 
 
-class UserRoleModel(BaseModelSQL):
-    __tablename__ = 'user_role'
-
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'))
-    role_id = Column(UUID(as_uuid=True), ForeignKey('roles.id'))
+role_user_table = Table(
+    'user_role', BaseModelSQL.metadata,
+    Column('user_id', UUID(as_uuid=True), ForeignKey('users.id'), primary_key=True),
+    Column('role_id', UUID(as_uuid=True), ForeignKey('roles.id'), primary_key=True)
+)

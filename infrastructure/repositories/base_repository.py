@@ -3,7 +3,7 @@ from abc import ABC
 from pydantic import BaseModel as BaseDataModel
 from sqlalchemy.orm import Session
 
-from infrastructure.adapters.database import Session as SessionLocal
+from infrastructure.adapters.database import SessionLocal
 from infrastructure.exceptions.database_exception import DatabaseException
 from infrastructure.models import BaseModelSQL
 
@@ -79,13 +79,14 @@ class BaseRepository(ABC):
             )
 
     def get_all(self) -> list:
-        try:
-            return self.db.query(self.__model).all()
-        except Exception:
-            name = self.__model.__name__.replace('Model', '')
-            raise DatabaseException(
-                message=f'{name} not found', status_code=404
-            )
+        # try:
+        #     return self.db.query(self.__model).all()
+        # except Exception:
+        #     name = self.__model.__name__.replace('Model', '')
+        #     raise DatabaseException(
+        #         message=f'{name} not found', status_code=404
+        #     )
+        return self.db.query(self.__model).all()
 
     def get_by_id(self, id: str) -> BaseModelSQL | None:
         try:

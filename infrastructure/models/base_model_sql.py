@@ -52,9 +52,9 @@ class BaseModelSQL(Base):
     def __repr__(self) -> str:
         class_name = self.__class__.__name__
         attributes = ', '.join(
-            f'{key}={value}' for key, value in self.__dict__.items()
+            f'{key}={value}' for key, value in self.__dict__.items() if key != '_sa_instance_state'
         )
-        return f'{class_name}({attributes})'
+        return f'<{class_name}({attributes})>'
 
     def to_dict(self, visited=None):
         if visited is None:
