@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -43,9 +44,15 @@ async def get_users(
         return JSONResponse(content=users, status_code=200)
     except Exception as e:
         logger.error(f'Error fetching users: {str(e)}')
-        raise HTTPException(
-            status_code=500, detail='Failed to fetch users'
-        ) from e
+        error_message = str(e).split('\n')[0]
+        status_code = (
+            e.status_code
+            if hasattr(e, 'status_code')
+            else HTTPStatus.INTERNAL_SERVER_ERROR
+        )
+        return JSONResponse(
+            content={'error': error_message}, status_code=status_code
+        )
 
 
 @user_router.get(
@@ -67,9 +74,15 @@ async def get_user(
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
         logger.error(f'Error fetching user: {str(e)}')
-        raise HTTPException(
-            status_code=500, detail='Failed to fetch user'
-        ) from e
+        error_message = str(e).split('\n')[0]
+        status_code = (
+            e.status_code
+            if hasattr(e, 'status_code')
+            else HTTPStatus.INTERNAL_SERVER_ERROR
+        )
+        return JSONResponse(
+            content={'error': error_message}, status_code=status_code
+        )
 
 
 @user_router.post(
@@ -85,9 +98,15 @@ async def create_user(
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
         logger.error(f'Error creating user: {str(e)}')
-        raise HTTPException(
-            status_code=500, detail='Failed to create user'
-        ) from e
+        error_message = str(e).split('\n')[0]
+        status_code = (
+            e.status_code
+            if hasattr(e, 'status_code')
+            else HTTPStatus.INTERNAL_SERVER_ERROR
+        )
+        return JSONResponse(
+            content={'error': error_message}, status_code=status_code
+        )
 
 
 @user_router.put(
@@ -112,9 +131,15 @@ async def update_user(
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
         logger.error(f'Error updating user: {str(e)}')
-        raise HTTPException(
-            status_code=500, detail='Failed to update user'
-        ) from e
+        error_message = str(e).split('\n')[0]
+        status_code = (
+            e.status_code
+            if hasattr(e, 'status_code')
+            else HTTPStatus.INTERNAL_SERVER_ERROR
+        )
+        return JSONResponse(
+            content={'error': error_message}, status_code=status_code
+        )
 
 
 @user_router.patch(
@@ -141,9 +166,15 @@ async def update_user_password(
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
         logger.error(f'Error updating user: {str(e)}')
-        raise HTTPException(
-            status_code=500, detail='Failed to update user'
-        ) from e
+        error_message = str(e).split('\n')[0]
+        status_code = (
+            e.status_code
+            if hasattr(e, 'status_code')
+            else HTTPStatus.INTERNAL_SERVER_ERROR
+        )
+        return JSONResponse(
+            content={'error': error_message}, status_code=status_code
+        )
 
 
 @user_router.delete(
@@ -166,9 +197,15 @@ async def delete_user(
         )
     except Exception as e:
         logger.error(f'Error deleting user: {str(e)}')
-        raise HTTPException(
-            status_code=500, detail='Failed to delete user'
-        ) from e
+        error_message = str(e).split('\n')[0]
+        status_code = (
+            e.status_code
+            if hasattr(e, 'status_code')
+            else HTTPStatus.INTERNAL_SERVER_ERROR
+        )
+        return JSONResponse(
+            content={'error': error_message}, status_code=status_code
+        )
 
 
 @user_router.post(
@@ -192,6 +229,15 @@ def login(
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         logger.error(f'Error logging in: {str(e)}')
+        error_message = str(e).split('\n')[0]
+        status_code = (
+            e.status_code
+            if hasattr(e, 'status_code')
+            else HTTPStatus.INTERNAL_SERVER_ERROR
+        )
+        return JSONResponse(
+            content={'error': error_message}, status_code=status_code
+        )
 
 
 @user_router.get(
