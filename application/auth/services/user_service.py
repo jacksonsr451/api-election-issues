@@ -8,6 +8,7 @@ from application.auth.schemas.user_schema import (
     UserSchema,
     UserUpdate,
 )
+from domain.auth.entities.user import UserEntity
 from domain.auth.services.password_encryption_service import (
     PasswordEncryptionService,
 )
@@ -21,7 +22,7 @@ class UserService:
         self.__repository = repository
 
     def create_user(self, user: UserCreate) -> UserSchema:
-        data: UserCreate = UserServiceDomain.create_user(**user.model_dump())
+        data: UserEntity = UserServiceDomain.create_user(**user.model_dump())
         user_model: UsersModel = self.__repository.create(data)
         return user_model.to_schema(UserSchema).model_dump()
 

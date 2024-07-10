@@ -9,7 +9,7 @@ from application.auth.adapters.access_token import AccessToken
 from application.auth.adapters.access_token_factory import get_access_token
 from application.auth.adapters.current_user import get_current_user
 from application.auth.adapters.user_service_factory import get_user_service
-from application.auth.adapters.validate import get_validate
+from application.auth.adapters.validate import Validate, get_validate
 from application.auth.schemas.token_schema import TokenSchema
 from application.auth.schemas.user_schema import (
     UpdateUserPassword,
@@ -33,8 +33,12 @@ logger = logging.getLogger(__name__)
 async def get_users(
     service: UserService = Depends(get_user_service),
     current_user=Depends(get_current_user),
+    validate: Validate = Depends(get_validate),
 ) -> JSONResponse:
     try:
+        user, _token = current_user
+        validate.validate_role(user, ['admin', 'editor'])
+
         users = service.get_all_users()
         return JSONResponse(content=users, status_code=200)
     except Exception as e:
@@ -53,8 +57,12 @@ async def get_user(
     user_id: str,
     service: UserService = Depends(get_user_service),
     current_user=Depends(get_current_user),
+    validate: Validate = Depends(get_validate),
 ) -> JSONResponse:
     try:
+        user, _token = current_user
+        validate.validate_role(user, ['admin', 'editor'])
+
         user = service.get_user(user_id)
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
@@ -73,7 +81,7 @@ async def create_user(
     data: UserCreate, service: UserService = Depends(get_user_service)
 ) -> JSONResponse:
     try:
-        user = await service.create_user(data)
+        user = service.create_user(data)
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
         logger.error(f'Error creating user: {str(e)}')
@@ -92,8 +100,14 @@ async def update_user(
     data: UserUpdate,
     service: UserService = Depends(get_user_service),
     current_user=Depends(get_current_user),
+    validate: Validate = Depends(get_validate),
 ) -> JSONResponse:
     try:
+        user, _token = current_user
+
+        if user.id != user_id:
+            validate.validate_role(user, ['admin'])
+
         user = await service.update_user(user_id, data)
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
@@ -115,6 +129,14 @@ async def update_user_password(
     current_user=Depends(get_current_user),
 ) -> JSONResponse:
     try:
+        user, _token = current_user
+
+        if user.id != user_id:
+            raise HTTPException(
+                status_code=403,
+                detail='User request permission denied',
+            )
+
         user = service.update_password(user_id, data)
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
@@ -132,8 +154,12 @@ async def delete_user(
     user_id: str,
     service: UserService = Depends(get_user_service),
     current_user=Depends(get_current_user),
+    validate: Validate = Depends(get_validate),
 ) -> JSONResponse:
     try:
+        user, _token = current_user
+        validate.validate_role(user, ['admin'])
+
         service.delete_user(user_id)
         return JSONResponse(
             content={'message': 'User has been deleted!'}, status_code=200
