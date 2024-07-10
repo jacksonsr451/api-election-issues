@@ -1,5 +1,5 @@
-from application.auth.services.access_token_service import AccessTokenService
+from application.auth.adapters.access_token import AccessToken
 
 
-def get_access_token() -> AccessTokenService:
-    return AccessTokenService
+def get_access_token() -> AccessToken:
+    return AccessToken

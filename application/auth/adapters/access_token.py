@@ -3,16 +3,16 @@ from datetime import datetime, timedelta, timezone
 from jwcrypto import jwk
 
 
-class AccessTokenService:
+class AccessToken:
     @staticmethod
     def load_rsa_keys():
         with open('./private_key.pem', 'rb') as f:
             priv_pem = f.read()
-            priv_key = jwk.JWK.from_pem(priv_pem)
+            priv_key = jwk.JWK.from_pem(priv_pem).export_to_pem(private_key=True, password=None).decode('utf-8')
 
         with open('./public_key.pem', 'rb') as f:
             pub_pem = f.read()
-            pub_key = jwk.JWK.from_pem(pub_pem)
+            pub_key = jwk.JWK.from_pem(pub_pem).export_to_pem().decode('utf-8')
 
         return priv_key, pub_key
 
@@ -28,28 +28,25 @@ class AccessTokenService:
 
     @staticmethod
     def create_access_token(user_id) -> tuple[int, str]:
-        _priv_key, _pub_key = AccessTokenService.load_rsa_keys()
+        _priv_key, _pub_key = AccessToken.load_rsa_keys()
 
-        algorithm = AccessTokenService.get_algorithm()
+        algorithm = AccessToken.get_algorithm()
 
-        exp = AccessTokenService.get_exp()
+        exp = AccessToken.get_exp()
 
         claims = {'sub': user_id, 'exp': exp.timestamp()}
 
         return exp.timestamp(), encode(
-            claims, _priv_key.export_to_pem(private_key=True, password=None).decode('utf-8'), algorithm=algorithm)
+            claims, _priv_key, algorithm=algorithm)
 
     @staticmethod
-    def verify_token(token: str, token_type: str = 'access') -> dict:
-        _priv_key, _pub_key = AccessTokenService.load_rsa_keys()
+    def verify_token(token: str) -> dict:
+        _priv_key, _pub_key = AccessToken.load_rsa_keys()
 
-        algorithm = AccessTokenService.get_algorithm()
+        algorithm = AccessToken.get_algorithm()
 
         try:
-            claims = decode(token, _pub_key.export_to_pem(), algorithms=[algorithm])
-            if claims.get('type') != token_type:
-                raise ValueError("Invalid token type")
-            return claims
+            return decode(token, _pub_key, algorithms=[algorithm])
         except ExpiredSignatureError as e:
             raise ValueError("Token expired") from e
         except Exception as e:

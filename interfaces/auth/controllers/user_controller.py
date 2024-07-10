@@ -4,8 +4,9 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 
+from application.auth.adapters.current_user import get_current_user
 from application.auth.schemas.token_schema import TokenSchema
-from application.auth.services.access_token_service import AccessTokenService
+from application.auth.adapters.access_token import AccessToken
 from application.auth.adapters.access_token_factory import get_access_token
 from application.auth.schemas.user_schema import UserSchema, UserCreate, UserUpdate, UpdateUserPassword, UserLogin
 from application.auth.services.user_service import UserService
@@ -22,7 +23,10 @@ logger = logging.getLogger(__name__)
     summary='Get all users',
     response_model=List[UserSchema],
 )
-async def get_users(service: UserService = Depends(get_user_service)) -> JSONResponse:
+async def get_users(
+    service: UserService = Depends(get_user_service),
+    current_user=Depends(get_current_user)
+) -> JSONResponse:
     try:
         users = service.get_all_users()
         return JSONResponse(content=users, status_code=200)
@@ -36,7 +40,11 @@ async def get_users(service: UserService = Depends(get_user_service)) -> JSONRes
     summary='Get a specific user',
     response_model=UserSchema,
 )
-async def get_user(user_id: str, service: UserService = Depends(get_user_service)) -> JSONResponse:
+async def get_user(
+    user_id: str,
+    service: UserService = Depends(get_user_service),
+    current_user=Depends(get_current_user)
+) -> JSONResponse:
     try:
         user = service.get_user(user_id)
         return JSONResponse(content=user, status_code=200)
@@ -64,7 +72,12 @@ async def create_user(data: UserCreate, service: UserService = Depends(get_user_
     summary='Update a user',
     response_model=UserSchema,
 )
-async def update_user(user_id: str, data: UserUpdate, service: UserService = Depends(get_user_service)) -> JSONResponse:
+async def update_user(
+    user_id: str,
+    data: UserUpdate,
+    service: UserService = Depends(get_user_service),
+    current_user=Depends(get_current_user)
+) -> JSONResponse:
     try:
         user = await service.update_user(user_id, data)
         return JSONResponse(content=user, status_code=200)
@@ -78,7 +91,12 @@ async def update_user(user_id: str, data: UserUpdate, service: UserService = Dep
     summary='Update password of a user',
     response_model=UserSchema,
 )
-async def update_user_password(user_id: str, data: UpdateUserPassword, service: UserService = Depends(get_user_service)) -> JSONResponse:
+async def update_user_password(
+    user_id: str,
+    data: UpdateUserPassword,
+    service: UserService = Depends(get_user_service),
+    current_user=Depends(get_current_user)
+) -> JSONResponse:
     try:
         user = service.update_password(user_id, data)
         return JSONResponse(content=user, status_code=200)
@@ -91,7 +109,11 @@ async def update_user_password(user_id: str, data: UpdateUserPassword, service: 
     '/users/{user_id}',
     summary='Delete a user',
 )
-async def delete_user(user_id: str, service: UserService = Depends(get_user_service)) -> JSONResponse:
+async def delete_user(
+    user_id: str,
+    service: UserService = Depends(get_user_service),
+    current_user=Depends(get_current_user)
+) -> JSONResponse:
     try:
         service.delete_user(user_id)
         return JSONResponse(content={'message': 'User has been deleted!'}, status_code=200)
@@ -108,7 +130,7 @@ async def delete_user(user_id: str, service: UserService = Depends(get_user_serv
 def login(
         data: UserLogin,
         user_service: UserService = Depends(get_user_service),
-        token_service: AccessTokenService = Depends(get_access_token)
+        token_service: AccessToken = Depends(get_access_token)
 ) -> JSONResponse:
     try:
         user = user_service.login(**data.model_dump())
