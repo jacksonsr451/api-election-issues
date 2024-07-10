@@ -31,6 +31,10 @@ class UserService:
         user_model: UsersModel = self.__repository.update(_id, data)
         return user_model.to_schema(UserSchema).model_dump()
 
+    def update_user_role(self, user_id: str, role_name: str) -> UserSchema:
+        user_model: UsersModel = self.__repository.update_user_role(user_id, role_name)
+        return user_model.to_schema(UserSchema).model_dump()
+
     def update_password(
         self, _id: str, user: UpdateUserPassword
     ) -> UserSchema:

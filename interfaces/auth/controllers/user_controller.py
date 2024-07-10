@@ -142,8 +142,8 @@ async def update_user(
         )
 
 
-@user_router.patch(
-    '/users/{user_id}',
+@user_router.put(
+    '/users/{user_id}/password',
     summary='Update password of a user',
     response_model=UserSchema,
 )
@@ -163,6 +163,37 @@ async def update_user_password(
             )
 
         user = service.update_password(user_id, data)
+        return JSONResponse(content=user, status_code=200)
+    except Exception as e:
+        logger.error(f'Error updating user: {str(e)}')
+        error_message = str(e).split('\n')[0]
+        status_code = (
+            e.status_code
+            if hasattr(e, 'status_code')
+            else HTTPStatus.INTERNAL_SERVER_ERROR
+        )
+        return JSONResponse(
+            content={'error': error_message}, status_code=status_code
+        )
+
+
+@user_router.put(
+    '/users/{user_id}/roles/{role_name}',
+    summary='Update role a user',
+    response_model=UserSchema,
+)
+async def update_user_roles(
+    user_id: str,
+    role_name: str,
+    service: UserService = Depends(get_user_service),
+    current_user=Depends(get_current_user),
+    validate: Validate = Depends(get_validate),
+) -> JSONResponse:
+    try:
+        user, _token = current_user
+        validate.validate_role(user, ['admin'])
+
+        user = service.update_user_role(user_id, role_name)
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
         logger.error(f'Error updating user: {str(e)}')

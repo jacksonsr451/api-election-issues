@@ -38,7 +38,7 @@ def upgrade() -> None:
             INSERT INTO roles (id, name, created_at, updated_at) VALUES
             ('{user_id}', 'user', '{datetime.now()}', '{datetime.now()}'), 
             ('{guest_id}', 'guest', '{datetime.now()}', '{datetime.now()}'), 
-            ('{editor_id}', 'editor', '{datetime.now()}', '{datetime.now()}'), 
+            ('{editor_id}', 'publisher', '{datetime.now()}', '{datetime.now()}'), 
             ('{admin_id}', 'admin', '{datetime.now()}', '{datetime.now()}');
             """
     )
