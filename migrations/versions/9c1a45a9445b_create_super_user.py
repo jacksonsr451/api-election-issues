@@ -1,10 +1,3 @@
-"""create super user
-
-Revision ID: 9c1a45a9445b
-Revises: 0183cb44252e
-Create Date: 2024-07-09 19:03:09.132049
-
-"""
 from datetime import datetime
 import uuid
 from typing import Sequence, Union
@@ -50,9 +43,10 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    # Obter o ID do super usuário
     connection = op.get_bind()
-    result = connection.execute("SELECT id FROM `user` WHERE email='jacksonsr45@gmail.com'")
+
+    # Obter o ID do super usuário
+    result = connection.execute(text("SELECT id FROM users WHERE email='jacksonsr45@gmail.com'"))
     user_id = result.fetchone()[0]
 
     # Remover a associação do usuário com a role 'admin'
@@ -65,6 +59,6 @@ def downgrade() -> None:
     # Remover o super usuário
     op.execute(
         f"""
-        DELETE FROM `user` WHERE id='{user_id}';
+        DELETE FROM users WHERE id='{user_id}';
         """
     )

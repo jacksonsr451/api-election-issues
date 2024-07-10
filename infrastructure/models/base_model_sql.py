@@ -82,11 +82,16 @@ class BaseModelSQL(Base):
                 ]
             elif value is not None and value not in visited:
                 result[attr.key] = value.to_dict(visited)
-
         return result
 
     def to_schema(self, schema: BaseDataModel) -> BaseDataModel:
-        model_dict = self.to_dict()
+        model_dict = self.to_dict(visited=set())
+        for key, value in model_dict.items():
+            if isinstance(value, uuid.UUID):
+                model_dict[key] = str(value)
+            elif isinstance(value, datetime):
+                model_dict[key] = value.isoformat()
+
         return schema(**model_dict)
 
     @classmethod

@@ -1,10 +1,3 @@
-"""populate data with roles and permissions
-
-Revision ID: 0183cb44252e
-Revises: 645e55cd9ba4
-Create Date: 2024-07-09 18:48:36.737261
-
-"""
 from datetime import datetime
 import uuid
 from typing import Sequence, Union
@@ -13,7 +6,6 @@ from alembic import op
 import sqlalchemy as sa
 
 
-# revision identifiers, used by Alembic.
 revision: str = '0183cb44252e'
 down_revision: Union[str, None] = '645e55cd9ba4'
 branch_labels: Union[str, Sequence[str], None] = None
@@ -21,6 +13,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    # Generate UUIDs for permissions and roles
     read_id = str(uuid.uuid4())
     view_id = str(uuid.uuid4())
     update_id = str(uuid.uuid4())
@@ -34,9 +27,9 @@ def upgrade() -> None:
     op.execute(
         f"""
             INSERT INTO permissions (id, name, created_at, updated_at) VALUES
-            ('{read_id}', 'read', '{datetime.now()}', '{datetime.now()}'), 
-            ('{view_id}', 'view', '{datetime.now()}', '{datetime.now()}'), 
-            ('{update_id}', 'update', '{datetime.now()}', '{datetime.now()}'), 
+            ('{read_id}', 'read', '{datetime.now()}', '{datetime.now()}'),
+            ('{view_id}', 'view', '{datetime.now()}', '{datetime.now()}'),
+            ('{update_id}', 'update', '{datetime.now()}', '{datetime.now()}'),
             ('{delete_id}', 'delete', '{datetime.now()}', '{datetime.now()}');
             """
     )
@@ -69,6 +62,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    # Delete associations and records
     op.execute("DELETE FROM role_permission;")
     op.execute("DELETE FROM roles;")
     op.execute("DELETE FROM permissions;")

@@ -3,6 +3,15 @@ from typing import List
 from pydantic import BaseModel
 
 
+class PermissionSchema(BaseModel):
+    name: str
+
+
+class RoleSchema(BaseModel):
+    name: str
+    permissions: List[PermissionSchema] = []
+
+
 class UserBase(BaseModel):
     email: str
 
@@ -29,4 +38,4 @@ class UserSchema(BaseModel):
     created_at: str
     updated_at: str
 
-    roles: List
+    roles: List[RoleSchema] = []
