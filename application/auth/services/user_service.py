@@ -1,11 +1,19 @@
-from fastapi import HTTPException
 from typing import List
 
+from fastapi import HTTPException
+
+from application.auth.schemas.user_schema import (
+    UpdateUserPassword,
+    UserCreate,
+    UserSchema,
+    UserUpdate,
+)
+from domain.auth.services.password_encryption_service import (
+    PasswordEncryptionService,
+)
+from domain.auth.services.user_service_domain import UserServiceDomain
 from infrastructure.models.users_model import UsersModel
 from infrastructure.repositories.user_repository import UserRepository
-from application.auth.schemas.user_schema import UserCreate, UserUpdate, UpdateUserPassword, UserSchema
-from domain.auth.services.user_service_domain import UserServiceDomain
-from domain.auth.services.password_encryption_service import PasswordEncryptionService
 
 
 class UserService:
@@ -22,8 +30,12 @@ class UserService:
         user_model: UsersModel = self.__repository.update(_id, data)
         return user_model.to_schema(UserSchema).model_dump()
 
-    def update_password(self, _id: str, user: UpdateUserPassword) -> UserSchema:
-        data: UserUpdate = UserServiceDomain.update_password(**user.model_dump())
+    def update_password(
+        self, _id: str, user: UpdateUserPassword
+    ) -> UserSchema:
+        data: UserUpdate = UserServiceDomain.update_password(
+            **user.model_dump()
+        )
         user_model: UsersModel = self.__repository.update(_id, data)
         return user_model.to_schema(UserSchema).model_dump()
 
@@ -39,10 +51,13 @@ class UserService:
         self.__repository.delete(_id)
 
     def login(self, email: str, password: str) -> UserSchema:
-        user: UsersModel = self.__repository.get_by_key_and_value('email', email)
-        if not user or not PasswordEncryptionService.verify_password(password, user.password):
+        user: UsersModel = self.__repository.get_by_key_and_value(
+            'email', email
+        )
+        if not user or not PasswordEncryptionService.verify_password(
+            password, user.password
+        ):
             raise HTTPException(
-                status_code=401,
-                detail='Incorrect email or password'
+                status_code=401, detail='Incorrect email or password'
             )
         return user

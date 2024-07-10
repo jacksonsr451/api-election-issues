@@ -1,6 +1,6 @@
 from sqlalchemy.orm import joinedload, subqueryload
 
-from infrastructure.models import UsersModel, RolesModel, PermissionModel
+from infrastructure.models import PermissionModel, RolesModel, UsersModel
 from infrastructure.repositories.base_repository import BaseRepository
 
 

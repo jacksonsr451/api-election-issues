@@ -3,13 +3,11 @@
 Revision ID: 158a16d7209a
 Revises: 96a373febbae
 Create Date: 2024-07-10 14:17:08.424325
-
 """
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = '158a16d7209a'

@@ -11,5 +11,11 @@ class RolesModel(BaseModelSQL):
 
     name = Column(String, nullable=False)
 
-    permissions = relationship('PermissionModel', secondary=role_permission_table, back_populates='roles')
-    users = relationship('UsersModel', secondary=role_user_table, back_populates='roles')
+    permissions = relationship(
+        'PermissionModel',
+        secondary=role_permission_table,
+        back_populates='roles',
+    )
+    users = relationship(
+        'UsersModel', secondary=role_user_table, back_populates='roles'
+    )

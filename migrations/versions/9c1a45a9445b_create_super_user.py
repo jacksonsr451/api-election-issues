@@ -1,13 +1,14 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.sql import text
 
-from domain.auth.services.password_encryption_service import PasswordEncryptionService
-
+from domain.auth.services.password_encryption_service import (
+    PasswordEncryptionService,
+)
 
 # revision identifiers, used by Alembic.
 revision: str = '9c1a45a9445b'
@@ -30,7 +31,9 @@ def upgrade() -> None:
 
     # Obter o ID da role 'admin'
     connection = op.get_bind()
-    result = connection.execute(text("SELECT id FROM roles WHERE name='admin'"))
+    result = connection.execute(
+        text("SELECT id FROM roles WHERE name='admin'")
+    )
     admin_role_id = result.fetchone()[0]
 
     # Inserir o relacionamento do usuário com a role 'admin'
@@ -46,7 +49,9 @@ def downgrade() -> None:
     connection = op.get_bind()
 
     # Obter o ID do super usuário
-    result = connection.execute(text("SELECT id FROM users WHERE email='jacksonsr45@gmail.com'"))
+    result = connection.execute(
+        text("SELECT id FROM users WHERE email='jacksonsr45@gmail.com'")
+    )
     user_id = result.fetchone()[0]
 
     # Remover a associação do usuário com a role 'admin'

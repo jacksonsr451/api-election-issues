@@ -28,7 +28,9 @@ class BaseRepository(ABC):
     def update(self, id: str, data: BaseDataModel) -> BaseModelSQL | None:
         try:
             if instance := (
-                self.db.query(self.__model).filter(self.__model.id == id).first()
+                self.db.query(self.__model)
+                .filter(self.__model.id == id)
+                .first()
             ):
                 for key, value in data.model_dump().items():
                     setattr(instance, key, value)
@@ -64,7 +66,9 @@ class BaseRepository(ABC):
     def delete_by_id_with_key_and_value(self, key: str, value: str) -> None:
         try:
             delete_data = (
-                self.db.query(self.__model).filter(getattr(self.__model, key) == value).first()
+                self.db.query(self.__model)
+                .filter(getattr(self.__model, key) == value)
+                .first()
             )
             self.db.delete(delete_data)
             self.db.commit()
@@ -119,7 +123,9 @@ class BaseRepository(ABC):
                 message=f'{name} with {key} {value} not found', status_code=404
             ) from e
 
-    def get_by_key_and_value(self, key: str, value: str) -> BaseModelSQL | None:
+    def get_by_key_and_value(
+        self, key: str, value: str
+    ) -> BaseModelSQL | None:
         try:
             return (
                 self.db.query(self.__model)

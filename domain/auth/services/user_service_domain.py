@@ -1,8 +1,11 @@
 import uuid
+
 from pydantic import BaseModel
 
 from domain.auth.entities.user import User
-from domain.auth.services.password_encryption_service import PasswordEncryptionService
+from domain.auth.services.password_encryption_service import (
+    PasswordEncryptionService,
+)
 
 
 class UserServiceDomain:
@@ -13,7 +16,9 @@ class UserServiceDomain:
         :rtype: object
         """
         id: str = str(uuid.uuid4())
-        password = PasswordEncryptionService.encrypt_password(password=password)
+        password = PasswordEncryptionService.encrypt_password(
+            password=password
+        )
         user = User(_id=id, email=email, password=password)
         return user.get()
 
@@ -26,7 +31,9 @@ class UserServiceDomain:
 
     @staticmethod
     def update_password(id: str, password: str) -> BaseModel:
-        password = PasswordEncryptionService.encrypt_password(password=password)
+        password = PasswordEncryptionService.encrypt_password(
+            password=password
+        )
         user = User(_id=id, password=password)
         return user.get()
 

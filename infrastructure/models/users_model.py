@@ -1,7 +1,11 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from application.auth.schemas.user_schema import UserSchema, PermissionSchema, RoleSchema
+from application.auth.schemas.user_schema import (
+    PermissionSchema,
+    RoleSchema,
+    UserSchema,
+)
 from infrastructure.models.base_model_sql import BaseModelSQL
 from infrastructure.models.user_role_model import role_user_table
 
@@ -12,7 +16,9 @@ class UsersModel(BaseModelSQL):
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
 
-    roles = relationship("RolesModel", secondary=role_user_table, back_populates="users")
+    roles = relationship(
+        'RolesModel', secondary=role_user_table, back_populates='users'
+    )
 
     def to_schema(self, schema: UserSchema) -> UserSchema:
         user_dict = self.to_dict()

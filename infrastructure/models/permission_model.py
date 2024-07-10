@@ -10,5 +10,8 @@ class PermissionModel(BaseModelSQL):
 
     name = Column(String(50), unique=True, nullable=False)
 
-    roles = relationship('RolesModel', secondary=role_permission_table, back_populates='permissions')
-
+    roles = relationship(
+        'RolesModel',
+        secondary=role_permission_table,
+        back_populates='permissions',
+    )

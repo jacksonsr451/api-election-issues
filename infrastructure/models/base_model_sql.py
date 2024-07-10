@@ -3,12 +3,11 @@ from datetime import datetime
 from typing import TypeVar
 
 from pydantic import BaseModel as BaseDataModel
-from sqlalchemy import TIMESTAMP, Column
+from sqlalchemy import TIMESTAMP, Column, inspect
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm.collections import InstrumentedList
 from sqlalchemy.orm.dynamic import AppenderQuery
-from sqlalchemy import inspect
 
 from infrastructure.adapters.database import Base
 
@@ -52,7 +51,9 @@ class BaseModelSQL(Base):
     def __repr__(self) -> str:
         class_name = self.__class__.__name__
         attributes = ', '.join(
-            f'{key}={value}' for key, value in self.__dict__.items() if key != '_sa_instance_state'
+            f'{key}={value}'
+            for key, value in self.__dict__.items()
+            if key != '_sa_instance_state'
         )
         return f'<{class_name}({attributes})>'
 

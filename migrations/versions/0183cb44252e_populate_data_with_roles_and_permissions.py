@@ -1,10 +1,9 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 revision: str = '0183cb44252e'
 down_revision: Union[str, None] = '645e55cd9ba4'
@@ -63,6 +62,6 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # Delete associations and records
-    op.execute("DELETE FROM role_permission;")
-    op.execute("DELETE FROM roles;")
-    op.execute("DELETE FROM permissions;")
+    op.execute('DELETE FROM role_permission;')
+    op.execute('DELETE FROM roles;')
+    op.execute('DELETE FROM permissions;')

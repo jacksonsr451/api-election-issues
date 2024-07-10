@@ -1,5 +1,5 @@
 from infrastructure.models.base_model_sql import BaseModelSQL
+from infrastructure.models.blacklist_token_model import BlacklistTokenModel
 from infrastructure.models.permission_model import PermissionModel
 from infrastructure.models.roles_model import RolesModel
 from infrastructure.models.users_model import UsersModel
-from infrastructure.models.blacklist_token_model import BlacklistTokenModel

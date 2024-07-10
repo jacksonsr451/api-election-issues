@@ -1,5 +1,5 @@
-from infrastructure.repositories.base_repository import BaseRepository
 from infrastructure.models import BlacklistTokenModel
+from infrastructure.repositories.base_repository import BaseRepository
 
 
 class TokenRepository(BaseRepository):
@@ -13,6 +13,10 @@ class TokenRepository(BaseRepository):
         self.db.refresh(model)
 
     def check_token(self, token: str) -> bool:
-        token_in_blacklist = self.db.query(BlacklistTokenModel).filter(BlacklistTokenModel.token == token).first()
+        token_in_blacklist = (
+            self.db.query(BlacklistTokenModel)
+            .filter(BlacklistTokenModel.token == token)
+            .first()
+        )
 
         return not bool(token_in_blacklist)
