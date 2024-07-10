@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from rich import status
 
 from infrastructure.models.users_model import UsersModel
 from infrastructure.repositories.user_repository import UserRepository
@@ -18,10 +17,10 @@ def get_user_repository() -> UserRepository:
 def get_current_user(
     user_repository: UserRepository = Depends(get_user_repository),
     token: str = Depends(oauth2_scheme)
-):
+) -> tuple[UsersModel, str]:
     claims = AccessToken.verify_token(token=token)
     if user := user_repository.get_by_id(claims['sub']):
-        return user
+        return user, token
     else:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,

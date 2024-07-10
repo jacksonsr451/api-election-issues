@@ -3,6 +3,7 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
+from sqlalchemy.testing.pickleable import User
 
 from application.auth.adapters.current_user import get_current_user
 from application.auth.schemas.token_schema import TokenSchema
@@ -139,3 +140,19 @@ def login(
         return JSONResponse(content=response, status_code=200)
     except Exception as e:
         logger.error(f"Error logging in: {str(e)}")
+
+
+@user_router.get(
+    '/logout',
+    summary='Logout a user',
+)
+def logout(
+    current_user: User = Depends(get_current_user),
+    token_services: AccessToken = Depends(get_access_token)
+) -> JSONResponse:
+    _user, token = current_user
+    token_services.invalidate_token(token)
+
+    response = JSONResponse(content={'message': 'User has been logged out!'}, status_code=200)
+    response.delete_cookie(key="Authorization")
+    return response

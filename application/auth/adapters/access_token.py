@@ -2,6 +2,15 @@ from jwt import encode, decode, ExpiredSignatureError
 from datetime import datetime, timedelta, timezone
 from jwcrypto import jwk
 
+from fastapi import Depends, HTTPException
+
+from infrastructure.repositories.token_repository import TokenRepository
+from infrastructure.models.blacklist_token_model import BlacklistTokenModel
+
+
+def get_token_repository() -> TokenRepository:
+    return TokenRepository(BlacklistTokenModel)
+
 
 class AccessToken:
     @staticmethod
@@ -40,10 +49,16 @@ class AccessToken:
             claims, _priv_key, algorithm=algorithm)
 
     @staticmethod
-    def verify_token(token: str) -> dict:
+    def verify_token(
+        token: str,
+    ) -> dict:
         _priv_key, _pub_key = AccessToken.load_rsa_keys()
 
         algorithm = AccessToken.get_algorithm()
+
+        token_service = get_token_repository()
+        if not token_service.check_token(token):
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
 
         try:
             return decode(token, _pub_key, algorithms=[algorithm])
@@ -51,3 +66,10 @@ class AccessToken:
             raise ValueError("Token expired") from e
         except Exception as e:
             raise ValueError(f"Invalid token: {e}") from e
+
+    @staticmethod
+    def invalidate_token(
+            token: str,
+    ) -> None:
+        token_repository = get_token_repository()
+        token_repository.invite_token(token)
