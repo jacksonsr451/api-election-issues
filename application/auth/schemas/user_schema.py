@@ -19,6 +19,10 @@ class UpdateUserPassword(BaseModel):
     password: str
 
 
+class UserLogin(UserBase):
+    password: str
+
+
 class UserSchema(BaseModel):
     id: str
     email: str

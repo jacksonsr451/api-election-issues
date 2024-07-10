@@ -1,9 +1,11 @@
+from fastapi import HTTPException
 from typing import List
 
 from infrastructure.models.users_model import UsersModel
 from infrastructure.repositories.user_repository import UserRepository
 from application.auth.schemas.user_schema import UserCreate, UserUpdate, UpdateUserPassword, UserSchema
 from domain.auth.services.user_service_domain import UserServiceDomain
+from domain.auth.services.password_encryption_service import PasswordEncryptionService
 
 
 class UserService:
@@ -35,3 +37,12 @@ class UserService:
 
     def delete_user(self, _id: str) -> None:
         self.__repository.delete(_id)
+
+    def login(self, email: str, password: str) -> UserSchema:
+        user: UsersModel = self.__repository.get_by_key_and_value('email', email)
+        if not user or not PasswordEncryptionService.verify_password(password, user.password):
+            raise HTTPException(
+                status_code=401,
+                detail='Incorrect email or password'
+            )
+        return user

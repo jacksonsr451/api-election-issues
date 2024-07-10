@@ -22,6 +22,9 @@ alembic = "^1.13.2"
 python-decouple = "^3.8"
 psycopg2-binary = "^2.9.9"
 pwdlib = {extras = ["argon2"], version = "^0.2.0"}
+python-multipart = "^0.0.9"
+pyjwt = "^2.8.0"
+python-jwt = "^4.1.0"
 
 
 [build-system]
