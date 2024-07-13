@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import TypeVar
 
 from pydantic import BaseModel as BaseDataModel
-from sqlalchemy import TIMESTAMP, Column, inspect
+from sqlalchemy import TIMESTAMP, Column
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm.collections import InstrumentedList
@@ -85,7 +85,7 @@ class BaseModelSQL(Base):
                 result[attr.key] = value.to_dict(visited)
         return result
 
-    def to_schema(self, schema: BaseDataModel) -> BaseDataModel:
+    def to_schema(self, schema) -> BaseDataModel:
         model_dict = self.to_dict(visited=set())
         for key, value in model_dict.items():
             if isinstance(value, uuid.UUID):

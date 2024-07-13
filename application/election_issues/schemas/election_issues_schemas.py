@@ -55,10 +55,12 @@ class ElectionIssuesBase(BaseModel):
 class ElectionIssuesCreate(ElectionIssuesBase):
     pass
 
+
 class ElectionIssuesUpdate(ElectionIssuesBase):
     pass
 
-class ElectionIssues:
+
+class ElectionIssues(BaseModel):
     id: str
     type: str
     title: str
