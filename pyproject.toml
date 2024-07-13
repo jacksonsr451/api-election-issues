@@ -25,6 +25,7 @@ pwdlib = {extras = ["argon2"], version = "^0.2.0"}
 python-multipart = "^0.0.9"
 pyjwt = "^2.8.0"
 python-jwt = "^4.1.0"
+pylint = "^3.2.5"
 
 
 [tool.poetry.group.dev.dependencies]

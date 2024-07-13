@@ -5,7 +5,6 @@ from interfaces import init_routes
 
 app = FastAPI()
 
-# Configuração do CORS
 origins = [
     'http://localhost',
     'http://localhost:3000',
