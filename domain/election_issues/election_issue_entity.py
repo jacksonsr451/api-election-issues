@@ -21,4 +21,4 @@ class ElectionIssuesEntity(BaseModel):
     title: str = Field(default='')
     location: str = Field(default='')
     year: int = Field(default=2022)
-    questions: Optional[List[Questions]] = Field(default=[])
+    questions: Optional[List[QuestionsEntity]] = Field(default=[])
