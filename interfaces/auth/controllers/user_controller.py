@@ -68,7 +68,8 @@ async def get_user(
 ) -> JSONResponse:
     try:
         user, _token = current_user
-        validate.validate_role(user, ['admin', 'editor'])
+        if user.id.__str__() != user_id:
+            validate.validate_role(user, ['admin'])
 
         user = service.get_user(user_id)
         return JSONResponse(content=user, status_code=200)
@@ -124,7 +125,7 @@ async def update_user(
     try:
         user, _token = current_user
 
-        if user.id != user_id:
+        if user.id.__str__() != user_id:
             validate.validate_role(user, ['admin'])
 
         user = await service.update_user(user_id, data)
@@ -156,7 +157,7 @@ async def update_user_password(
     try:
         user, _token = current_user
 
-        if user.id != user_id:
+        if user.id.__str__() != user_id:
             raise HTTPException(
                 status_code=403,
                 detail='User request permission denied',
