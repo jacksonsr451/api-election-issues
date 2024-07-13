@@ -26,10 +26,15 @@ class ElectionIssuesService:
         return model.to_schema(schema=ElectionIssues).model_dump()
 
     def get_all_election_issues(self):
-        return self.__repository.get_all()
+        models = self.__repository.get_all()
+        return [
+            model.to_schema(schema=ElectionIssues).model_dump()
+            for model in models
+        ]
 
     def get_election_issue(self, id: str):
-        return self.__repository.get_by_id(id)
+        model = self.__repository.get_by_id(id)
+        return model.to_schema(schema=ElectionIssues).model_dump()
 
     def delete_election_issue(self, id: str):
         self.__repository.delete(id)

@@ -4,7 +4,6 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from sqlalchemy.testing.pickleable import User
 
 from application.auth.adapters.access_token import AccessToken
 from application.auth.adapters.access_token_factory import get_access_token
@@ -20,6 +19,7 @@ from application.auth.schemas.user_schema import (
     UserUpdate,
 )
 from application.auth.services.user_service import UserService
+from infrastructure.models import UsersModel
 
 user_router = APIRouter(prefix='/api/v1', tags=['Users'])
 
@@ -38,7 +38,7 @@ async def get_users(
 ) -> JSONResponse:
     try:
         user, _token = current_user
-        validate.validate_role(user, ['admin', 'editor'])
+        validate.validate_role(user, ['admin', 'publisher'])
 
         users = service.get_all_users()
         return JSONResponse(content=users, status_code=200)
@@ -277,7 +277,7 @@ def login(
     summary='Logout a user',
 )
 def logout(
-    current_user: User = Depends(get_current_user),
+    current_user: UsersModel = Depends(get_current_user),
     token_services: AccessToken = Depends(get_access_token),
 ) -> JSONResponse:
     _user, token = current_user
