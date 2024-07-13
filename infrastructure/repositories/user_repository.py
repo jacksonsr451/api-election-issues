@@ -58,7 +58,7 @@ class UserRepository(BaseRepository):
             )
             .all()
         )
-    
+
     def update_user_role(self, user_id: str, role_name: str) -> UsersModel:
         if (
             user := self.db.query(UsersModel)
@@ -67,7 +67,9 @@ class UserRepository(BaseRepository):
         ):
             role = self.get_role(role_name)
             if not role:
-                raise DatabaseException(message=f'Role "{role_name}" not found', status_code=404)
+                raise DatabaseException(
+                    message=f'Role "{role_name}" not found', status_code=404
+                )
             user.roles.append(role)
             self.db.add(user)
             return self._extracted_from_update_5(user)
@@ -78,7 +80,5 @@ class UserRepository(BaseRepository):
 
     def get_role(self, name: str) -> Optional[RolesModel]:
         return (
-            self.db.query(RolesModel)
-            .filter(RolesModel.name == name)
-            .first()
+            self.db.query(RolesModel).filter(RolesModel.name == name).first()
         )
