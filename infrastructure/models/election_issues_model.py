@@ -18,3 +18,10 @@ class ElectionIssuesModel(BaseModelSQL):
         cascade='all, delete-orphan',
         lazy='dynamic',
     )
+
+    answer = relationship(
+        'AnswersModel',
+        back_populates='election_issue',
+        cascade='all, delete-orphan',
+        lazy='dynamic',
+    )

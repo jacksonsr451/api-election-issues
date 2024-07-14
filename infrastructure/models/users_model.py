@@ -20,6 +20,13 @@ class UsersModel(BaseModelSQL):
         'RolesModel', secondary=role_user_table, back_populates='users'
     )
 
+    answer = relationship(
+        'AnswersModel',
+        back_populates='user',
+        cascade='all, delete-orphan',
+        lazy='dynamic',
+    )
+
     def to_schema(self, schema: UserSchema) -> UserSchema:
         user_dict = self.to_dict()
         user_schema = UserSchema(**user_dict)

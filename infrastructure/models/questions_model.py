@@ -9,7 +9,7 @@ class QuestionsModel(BaseModelSQL):
 
     text: MappedColumn[str] = Column(String(255), nullable=False)
 
-    election_issues_id: MappedColumn[int] = Column(
+    election_issues_id: MappedColumn[str] = Column(
         UUID(as_uuid=True),
         ForeignKey('election_issues.id'),
         nullable=False,
@@ -24,3 +24,5 @@ class QuestionsModel(BaseModelSQL):
         cascade='all, delete-orphan',
         lazy='dynamic',
     )
+
+    answer = relationship('QuestionsAnswersModel', back_populates='questions')

@@ -14,3 +14,5 @@ class OptionsModel(BaseModelSQL):
         nullable=False,
     )
     question = relationship('QuestionsModel', back_populates='options')
+
+    answer = relationship('QuestionsAnswersModel', back_populates='questions')

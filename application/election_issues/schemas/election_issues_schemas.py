@@ -4,8 +4,6 @@ from uuid import uuid4
 
 from pydantic import UUID4, BaseModel, Field
 
-from infrastructure.models import OptionsModel
-
 
 class OptionsBase(BaseModel):
     text: str = Field(default='')
