@@ -81,7 +81,7 @@ async def get_answers(
         )
 
 
-@answers_router.get(
+@answers_router.post(
     '/answers',
     summary='Create a new answers',
     response_model=AnswersSchema,

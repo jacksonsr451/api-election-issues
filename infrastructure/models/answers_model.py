@@ -1,7 +1,7 @@
 from sqlalchemy import UUID, Column, ForeignKey, Text
 from sqlalchemy.orm import MappedColumn, relationship
 
-from infrastructure.models import BaseModelSQL
+from infrastructure.models.base_model_sql import BaseModelSQL
 
 
 class AnswersModel(BaseModelSQL):
