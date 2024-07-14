@@ -15,7 +15,9 @@ class QuestionsModel(BaseModelSQL):
         nullable=False,
     )
 
-    election_issue = relationship("ElectionIssuesModel", back_populates="questions")
+    election_issue = relationship(
+        'ElectionIssuesModel', back_populates='questions'
+    )
     options = relationship(
         'OptionsModel',
         back_populates='question',

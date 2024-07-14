@@ -18,9 +18,7 @@ class UserRepository(BaseRepository):
             roles = data.get('roles', [])
             if not roles:
                 guest_role = (
-                    self.db.query(RolesModel)
-                    .filter_by(name = 'guest')
-                    .first()
+                    self.db.query(RolesModel).filter_by(name='guest').first()
                 )
                 if guest_role is None:
                     raise DatabaseException(
@@ -60,11 +58,7 @@ class UserRepository(BaseRepository):
         )
 
     def update_user_role(self, user_id: str, role_name: str) -> UsersModel:
-        if (
-            user := self.db.query(UsersModel)
-            .filter_by(id = user_id)
-            .first()
-        ):
+        if user := self.db.query(UsersModel).filter_by(id=user_id).first():
             role = self.get_role(role_name)
             if not role:
                 raise DatabaseException(
@@ -79,9 +73,7 @@ class UserRepository(BaseRepository):
             )
 
     def get_role(self, name: str) -> Optional[RolesModel]:
-        return (
-            self.db.query(RolesModel).filter_by(name = name).first()
-        )
+        return self.db.query(RolesModel).filter_by(name=name).first()
 
     def get_user_by_email(self, email: str):
         try:

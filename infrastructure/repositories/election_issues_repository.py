@@ -26,19 +26,17 @@ class ElectionIssuesRepository(BaseRepository):
                 type=data['type'],
                 title=data['title'],
                 location=data['location'],
-                year=data['year']
+                year=data['year'],
             )
 
             for question_data in data_questions:
                 question = QuestionsModel(
                     text=question_data['text'],
                     created_at=question_data.get('created_at'),
-                    updated_at=question_data.get('updated_at')
+                    updated_at=question_data.get('updated_at'),
                 )
                 for option_data in question_data.get('options', []):
-                    option = OptionsModel(
-                        text=option_data['text']
-                    )
+                    option = OptionsModel(text=option_data['text'])
                     question.options.append(option)
 
                 model_instance.questions.append(question)
@@ -47,24 +45,29 @@ class ElectionIssuesRepository(BaseRepository):
             return self._extracted_from_update_5(model_instance)
 
         except Exception as e:
-            print(f"Erro ao criar registro: {str(e)}")
+            print(f'Erro ao criar registro: {str(e)}')
             self.db.rollback()
             raise
 
     def update(self, id: str, data: ElectionIssuesEntity):
         try:
             data_dict = data.model_dump()
-            instance = self.db.query(ElectionIssuesModel).filter_by(id=id).first()
+            instance = (
+                self.db.query(ElectionIssuesModel).filter_by(id=id).first()
+            )
 
             if not instance:
-                raise ValueError("Instance not found")
+                raise ValueError('Instance not found')
 
             data_questions = data_dict.get('questions', [])
             del data_dict['questions']
 
             for key, value in data_dict.items():
                 if hasattr(instance, key):
-                    if key != 'id' and key in ElectionIssuesModel.__table__.columns.keys():
+                    if (
+                        key != 'id'
+                        and key in ElectionIssuesModel.__table__.columns.keys()
+                    ):
                         setattr(instance, key, value)
             for question_data in data_questions:
                 question_id = question_data.get('id')
@@ -81,7 +84,11 @@ class ElectionIssuesRepository(BaseRepository):
                     if question_instance:
                         for key, value in question_data.items():
                             if hasattr(question_instance, key):
-                                if key != 'id' and key in QuestionsModel.__table__.columns.keys():
+                                if (
+                                    key != 'id'
+                                    and key
+                                    in QuestionsModel.__table__.columns.keys()
+                                ):
                                     setattr(question_instance, key, value)
                     else:
                         question_instance = QuestionsModel(**question_data)
@@ -101,7 +108,11 @@ class ElectionIssuesRepository(BaseRepository):
                         if option_instance:
                             for key, value in option_data.items():
                                 if hasattr(option_instance, key):
-                                    if key != 'id' and key in OptionsModel.__table__.columns.keys():
+                                    if (
+                                        key != 'id'
+                                        and key
+                                        in OptionsModel.__table__.columns.keys()
+                                    ):
                                         setattr(option_instance, key, value)
                         else:
                             option_instance = OptionsModel(**option_data)
@@ -114,6 +125,6 @@ class ElectionIssuesRepository(BaseRepository):
             return self._extracted_from_update_5(instance)
 
         except Exception as e:
-            print(f"Erro ao atualizar registro: {str(e)}")
+            print(f'Erro ao atualizar registro: {str(e)}')
             self.db.rollback()
             raise e
