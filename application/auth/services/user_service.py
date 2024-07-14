@@ -58,13 +58,11 @@ class UserService:
         self.__repository.delete(_id)
 
     def login(self, email: str, password: str) -> UserSchema:
-        user: UsersModel = self.__repository.get_by_key_and_value(
-            'email', email
-        )
+        user: UsersModel = self.__repository.get_user_by_email(email)
         if not user or not PasswordEncryptionService.verify_password(
             password, user.password
         ):
             raise HTTPException(
                 status_code=401, detail='Incorrect email or password'
             )
-        return user
+        return user.to_schema(UserSchema)

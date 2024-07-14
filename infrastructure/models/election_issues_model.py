@@ -14,7 +14,7 @@ class ElectionIssuesModel(BaseModelSQL):
 
     questions = relationship(
         'QuestionsModel',
-        back_populates='election_issues',
+        back_populates='election_issue',
         cascade='all, delete-orphan',
         lazy='dynamic',
     )

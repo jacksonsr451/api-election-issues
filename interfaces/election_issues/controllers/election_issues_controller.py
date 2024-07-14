@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
     response_model=List[ElectionIssues],
 )
 async def list_election_issues(
-    service: ElectionIssuesService = Depends(get_election_issues_service()),
+    service: ElectionIssuesService = Depends(get_election_issues_service),
     current_user=Depends(get_current_user),
     validate: Validate = Depends(get_validate),
 ) -> JSONResponse:
@@ -61,7 +61,7 @@ async def list_election_issues(
 )
 def get_election_issue(
     issue_id: str,
-    service: ElectionIssuesService = Depends(get_election_issues_service()),
+    service: ElectionIssuesService = Depends(get_election_issues_service),
     current_user=Depends(get_current_user),
     validate: Validate = Depends(get_validate),
 ) -> JSONResponse:
@@ -91,7 +91,7 @@ def get_election_issue(
 )
 def create_election_issue(
     data: ElectionIssuesCreate,
-    service: ElectionIssuesService = Depends(get_election_issues_service()),
+    service: ElectionIssuesService = Depends(get_election_issues_service),
     current_user=Depends(get_current_user),
     validate: Validate = Depends(get_validate),
 ) -> JSONResponse:
@@ -119,10 +119,10 @@ def create_election_issue(
     summary='Update a election issues',
     response_model=ElectionIssues,
 )
-def create_election_issue(
+def update_election_issue(
     issue_id: str,
     data: ElectionIssuesUpdate,
-    service: ElectionIssuesService = Depends(get_election_issues_service()),
+    service: ElectionIssuesService = Depends(get_election_issues_service),
     current_user=Depends(get_current_user),
     validate: Validate = Depends(get_validate),
 ) -> JSONResponse:
@@ -150,9 +150,9 @@ def create_election_issue(
     summary='Delete a election issues',
     response_model=ElectionIssues,
 )
-def create_election_issue(
+def delete_election_issue(
     issue_id: str,
-    service: ElectionIssuesService = Depends(get_election_issues_service()),
+    service: ElectionIssuesService = Depends(get_election_issues_service),
     current_user=Depends(get_current_user),
     validate: Validate = Depends(get_validate),
 ) -> JSONResponse:

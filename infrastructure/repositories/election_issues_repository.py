@@ -16,40 +16,61 @@ class ElectionIssuesRepository(BaseRepository):
         super().__init__(model=model)
 
     def create(self, data: ElectionIssuesEntity):
-        data = data.model_dump()
-        data_questions = data.get('questions', [])
-        del data['questions']
-        model_instance = ElectionIssuesModel.from_model(**data)
-        questions = []
-        for question in data_questions:
-            options = []
-            data_options = question.get('options', [])
-            del question['options']
-            question_model = QuestionsModel(question)
-            for option in data_options:
-                option_model = OptionsModel(option)
-                self.db.add(option_model)
-                options.append(option_model)
-            question_model.options = options
-            self.db.add(question_model)
-            questions.append(question_model)
-        model_instance.questions = questions
-        self.db.add(model_instance)
-        return self._extracted_from_update_5(model_instance)
+        try:
+            data = data.model_dump()
+
+            data_questions = data.get('questions', [])
+            del data['questions']
+
+            model_instance = ElectionIssuesModel(
+                type=data['type'],
+                title=data['title'],
+                location=data['location'],
+                year=data['year']
+            )
+
+            for question_data in data_questions:
+                question = QuestionsModel(
+                    text=question_data['text'],
+                    created_at=question_data.get('created_at'),
+                    updated_at=question_data.get('updated_at')
+                )
+                for option_data in question_data.get('options', []):
+                    option = OptionsModel(
+                        text=option_data['text']
+                    )
+                    question.options.append(option)
+
+                model_instance.questions.append(question)
+
+            self.db.add(model_instance)
+            return self._extracted_from_update_5(model_instance)
+
+        except Exception as e:
+            print(f"Erro ao criar registro: {str(e)}")
+            self.db.rollback()
+            raise
 
     def update(self, id: str, data: ElectionIssuesEntity):
-        instance = self.db.query(ElectionIssuesModel).filter_by(id=id).first()
-        if instance:
+        try:
             data_dict = data.model_dump()
+            instance = self.db.query(ElectionIssuesModel).filter_by(id=id).first()
+
+            if not instance:
+                raise ValueError("Instance not found")
+
             data_questions = data_dict.get('questions', [])
+            del data_dict['questions']
 
             for key, value in data_dict.items():
-                setattr(instance, key, value)
-
-            updated_questions = []
+                if hasattr(instance, key):
+                    if key != 'id' and key in ElectionIssuesModel.__table__.columns.keys():
+                        setattr(instance, key, value)
             for question_data in data_questions:
                 question_id = question_data.get('id')
+
                 options_data = question_data.get('options', [])
+                del question_data['options']
 
                 if question_id:
                     question_instance = (
@@ -59,15 +80,18 @@ class ElectionIssuesRepository(BaseRepository):
                     )
                     if question_instance:
                         for key, value in question_data.items():
-                            setattr(question_instance, key, value)
+                            if hasattr(question_instance, key):
+                                if key != 'id' and key in QuestionsModel.__table__.columns.keys():
+                                    setattr(question_instance, key, value)
+                    else:
+                        question_instance = QuestionsModel(**question_data)
+                        self.db.add(question_instance)
                 else:
                     question_instance = QuestionsModel(**question_data)
                     self.db.add(question_instance)
 
-                updated_options = []
                 for option_data in options_data:
                     option_id = option_data.get('id')
-
                     if option_id:
                         option_instance = (
                             self.db.query(OptionsModel)
@@ -76,20 +100,20 @@ class ElectionIssuesRepository(BaseRepository):
                         )
                         if option_instance:
                             for key, value in option_data.items():
-                                setattr(option_instance, key, value)
+                                if hasattr(option_instance, key):
+                                    if key != 'id' and key in OptionsModel.__table__.columns.keys():
+                                        setattr(option_instance, key, value)
+                        else:
+                            option_instance = OptionsModel(**option_data)
+                            self.db.add(option_instance)
                     else:
                         option_instance = OptionsModel(**option_data)
                         self.db.add(option_instance)
+                    question_instance.options.append(option_instance)
+                instance.questions.append(question_instance)
+            return self._extracted_from_update_5(instance)
 
-                    updated_options.append(option_instance)
-
-                question_instance.options = updated_options
-                updated_questions.append(question_instance)
-
-            instance.questions = updated_questions
-            self.db.add(instance)
-            self.db.commit()
-
-            return instance
-
-        return None
+        except Exception as e:
+            print(f"Erro ao atualizar registro: {str(e)}")
+            self.db.rollback()
+            raise e

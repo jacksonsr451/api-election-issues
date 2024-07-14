@@ -21,7 +21,7 @@ class ElectionIssuesService:
         return model.to_schema(schema=ElectionIssues).model_dump()
 
     def update_election_issue(self, id: str, data: ElectionIssuesUpdate):
-        entity = ElectionIssuesEntity(**data.model_dump())
+        entity: ElectionIssuesEntity = ElectionIssuesEntity(**data.model_dump())
         model = self.__repository.update(id, entity)
         return model.to_schema(schema=ElectionIssues).model_dump()
 

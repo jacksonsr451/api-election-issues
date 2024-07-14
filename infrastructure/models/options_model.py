@@ -1,5 +1,5 @@
 from sqlalchemy import UUID, Column, ForeignKey, String
-from sqlalchemy.orm import MappedColumn
+from sqlalchemy.orm import MappedColumn, relationship
 
 from infrastructure.models.base_model_sql import BaseModelSQL
 
@@ -13,3 +13,4 @@ class OptionsModel(BaseModelSQL):
         ForeignKey('questions.id'),
         nullable=False,
     )
+    question = relationship("QuestionsModel", back_populates="options")

@@ -1,7 +1,10 @@
+from email.policy import default
 from typing import List, Optional
 from uuid import uuid4
 
 from pydantic import UUID4, BaseModel, Field
+
+from infrastructure.models import OptionsModel
 
 
 class OptionsBase(BaseModel):
@@ -13,10 +16,11 @@ class OptionsCreate(OptionsBase):
 
 
 class OptionsUpdate(OptionsBase):
+    id: Optional[str] = Field(default=None)
     pass
 
 
-class Options:
+class Options(BaseModel):
     id: str
     text: str
     created_at: str
@@ -25,18 +29,18 @@ class Options:
 
 class QuestionsBase(BaseModel):
     text: str = Field(default='')
-    options: Optional[List[Options]] = Field(default=[])
 
 
 class QuestionsCreate(QuestionsBase):
-    pass
+    options: Optional[List[OptionsCreate]] = Field(default=[])
 
 
 class QuestionsUpdate(QuestionsBase):
-    pass
+    id: Optional[str] = Field(default=None)
+    options: Optional[List[OptionsUpdate]] = Field(default=[])
 
 
-class Questions:
+class Questions(BaseModel):
     id: str
     text: str
     options: Optional[List[Options]] = Field(default=[])
@@ -49,15 +53,14 @@ class ElectionIssuesBase(BaseModel):
     title: str
     location: str
     year: int
-    questions: Optional[List[Options]] = Field(default=[])
 
 
 class ElectionIssuesCreate(ElectionIssuesBase):
-    pass
+    questions: Optional[List[QuestionsCreate]] = Field(default=[])
 
 
 class ElectionIssuesUpdate(ElectionIssuesBase):
-    pass
+    questions: Optional[List[QuestionsUpdate]] = Field(default=[])
 
 
 class ElectionIssues(BaseModel):
@@ -66,6 +69,6 @@ class ElectionIssues(BaseModel):
     title: str
     location: str
     year: int
-    questions: Optional[List[Options]] = Field(default=[])
+    questions: Optional[List[Questions]] = Field(default=[])
     created_at: str
     updated_at: str
