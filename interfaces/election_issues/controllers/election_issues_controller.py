@@ -2,9 +2,8 @@ import logging
 from http import HTTPStatus
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from sqlalchemy.testing.pickleable import User
 
 from application.auth.adapters.current_user import get_current_user
 from application.auth.adapters.validate import Validate, get_validate

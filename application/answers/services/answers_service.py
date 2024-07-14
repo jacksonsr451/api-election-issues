@@ -21,8 +21,10 @@ class AnswersService:
         model = self.__repository.get_by_id(id)
         return model.to_schema(AnswersSchema).model_dump()
 
-    def get_all_answers(self) -> List[Dict[str, Any]]:
-        models = self.__repository.get_all()
+    def get_all_answers(self, issue_id: str) -> List[Dict[str, Any]]:
+        models = self.__repository.get_all_with_key_and_value(
+            'issue_id', issue_id
+        )
         return [
             model.to_schema(AnswersSchema).model_dump() for model in models
         ]
