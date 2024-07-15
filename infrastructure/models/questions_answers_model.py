@@ -18,15 +18,11 @@ class QuestionsAnswersModel(BaseModelSQL):
     question = relationship(
         'QuestionsModel',
         back_populates='answer',
-        cascade='all, delete-orphan',
-        lazy='dynamic',
     )
 
-    option = relationship(
+    option_answer = relationship(
         'OptionsModel',
         back_populates='answer',
-        cascade='all, delete-orphan',
-        lazy='dynamic',
     )
 
     answer = relationship(

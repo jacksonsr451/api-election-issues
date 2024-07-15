@@ -12,12 +12,7 @@ class ElectionIssuesModel(BaseModelSQL):
     location: MappedColumn[str] = Column(String(255), nullable=False)
     year: MappedColumn[int] = Column(Integer, nullable=False)
 
-    questions = relationship(
-        'QuestionsModel',
-        back_populates='election_issue',
-        cascade='all, delete-orphan',
-        lazy='dynamic',
-    )
+    questions = relationship('QuestionsModel', back_populates='election_issue')
 
     answer = relationship(
         'AnswersModel',

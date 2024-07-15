@@ -15,14 +15,12 @@ class QuestionsModel(BaseModelSQL):
         nullable=False,
     )
 
-    election_issue = relationship(
-        'ElectionIssuesModel', back_populates='questions'
-    )
-    options = relationship(
-        'OptionsModel',
+    election_issue = relationship('ElectionIssuesModel', back_populates='questions')
+    options = relationship('OptionsModel', back_populates='question')
+
+    answer = relationship(
+        'QuestionsAnswersModel',
         back_populates='question',
         cascade='all, delete-orphan',
         lazy='dynamic',
     )
-
-    answer = relationship('QuestionsAnswersModel', back_populates='questions')

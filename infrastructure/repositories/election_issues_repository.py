@@ -1,4 +1,5 @@
 from fastapi import Depends
+from sqlalchemy.orm import joinedload
 
 from domain.election_issues.election_issue_entity import ElectionIssuesEntity
 from infrastructure.models import (
@@ -119,8 +120,8 @@ class ElectionIssuesRepository(BaseRepository):
                             self.db.add(option_instance)
                     else:
                         option_instance = OptionsModel(**option_data)
-                        self.db.add(option_instance)
                     question_instance.options.append(option_instance)
+                    print(question_instance.id, option_instance.id)
                 instance.questions.append(question_instance)
             return self._extracted_from_update_5(instance)
 

@@ -13,6 +13,7 @@ class OptionsModel(BaseModelSQL):
         ForeignKey('questions.id'),
         nullable=False,
     )
+
     question = relationship('QuestionsModel', back_populates='options')
 
-    answer = relationship('QuestionsAnswersModel', back_populates='questions')
+    answer = relationship('QuestionsAnswersModel', back_populates='option_answer')

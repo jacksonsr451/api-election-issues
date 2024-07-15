@@ -37,7 +37,7 @@ class AccessToken:
 
     @staticmethod
     def get_exp() -> datetime:
-        return datetime.now(timezone.utc) + timedelta(hours=1)
+        return datetime.now(timezone.utc) + timedelta(hours=12)
 
     @staticmethod
     def create_access_token(user_id) -> tuple[int, str]:

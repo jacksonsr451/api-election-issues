@@ -29,6 +29,10 @@ class ElectionIssuesService:
 
     def get_all_election_issues(self):
         models = self.__repository.get_all()
+        print([
+            model.to_schema(schema=ElectionIssues).model_dump()
+            for model in models
+        ])
         return [
             model.to_schema(schema=ElectionIssues).model_dump()
             for model in models
