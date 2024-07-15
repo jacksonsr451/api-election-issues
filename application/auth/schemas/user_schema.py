@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -21,7 +21,7 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(UserBase):
-    pass
+    roles: Optional[List[RoleSchema]] = []
 
 
 class UpdateUserPassword(BaseModel):

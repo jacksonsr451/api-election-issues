@@ -128,7 +128,7 @@ async def update_user(
         if user.id.__str__() != user_id:
             validate.validate_role(user, ['admin'])
 
-        user = await service.update_user(user_id, data)
+        user = service.update_user(user_id, data)
         return JSONResponse(content=user, status_code=200)
     except Exception as e:
         logger.error(f'Error updating user: {str(e)}')

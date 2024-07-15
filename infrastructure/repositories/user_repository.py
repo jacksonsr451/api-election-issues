@@ -2,9 +2,9 @@ from typing import Optional
 
 from sqlalchemy.orm import joinedload
 
-from domain.auth.entities.user import UserEntity
+from domain.auth.user_entity import UserEntity
 from infrastructure.exceptions.database_exception import DatabaseException
-from infrastructure.models import RolesModel, UsersModel
+from infrastructure.models import RolesModel, UsersModel, BaseModelSQL
 from infrastructure.repositories.base_repository import BaseRepository
 
 
@@ -56,6 +56,52 @@ class UserRepository(BaseRepository):
             )
             .all()
         )
+
+    def update(self, id: str, data: UserEntity) -> BaseModelSQL | None:
+        try:
+            instance_user = self.db.query(UsersModel).filter_by(id=id).first()
+
+            if not instance_user:
+                raise ValueError('Instance not found')
+
+            data_dict = data.model_dump()
+
+            data_roles = data_dict.get('roles', [])
+            del data_dict['roles']
+
+            for key, value in data_dict.items():
+                if hasattr(instance_user, key) and value is not None:
+                    if (
+                        key != 'id'
+                        and key in UsersModel.__table__.columns.keys()
+                    ):
+                        setattr(instance_user, key, value)
+
+            def has_role(user, role_id):
+                for role in user.roles:
+                    if role.id == role_id:
+                        return True
+                return False
+
+            for data_role in data_roles:
+                name = data_role.get('name')
+
+                if name:
+                    role_instance = (
+                        self.db.query(RolesModel)
+                        .filter_by(name=name)
+                        .first()
+                    )
+
+                    if not has_role(instance_user, role_instance.id):
+                        instance_user.roles.append(role_instance)
+            self.db.add(instance_user)
+            return self._extracted_from_update_5(instance_user)
+
+        except Exception as e:
+            print(f'Erro ao atualizar registro: {str(e)}')
+            self.db.rollback()
+            raise e
 
     def update_user_role(self, user_id: str, role_name: str) -> UsersModel:
         if user := self.db.query(UsersModel).filter_by(id=user_id).first():
