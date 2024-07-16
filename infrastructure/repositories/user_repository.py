@@ -40,7 +40,13 @@ class UserRepository(BaseRepository):
                     )
                 roles.append(role)
 
+<<<<<<< HEAD
             data['password'] = PasswordEncryptionService.encrypt_password('admin')
+=======
+            if 'password' not in data:
+                data['password'] = PasswordEncryptionService.encrypt_password('admin')
+
+>>>>>>> 7eadb9b713e6a4e07dc281ea823216badde4c76e
             create_data = UsersModel.from_model(**data)
             create_data.roles = roles
 
@@ -69,6 +75,9 @@ class UserRepository(BaseRepository):
                 raise ValueError('Instance not found')
 
             data_dict = data.model_dump()
+
+            if 'password' not in data_dict:
+                data_dict['password'] = PasswordEncryptionService.encrypt_password('admin')
 
             data_roles = data_dict.get('roles', [])
             del data_dict['roles']
