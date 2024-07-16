@@ -1,4 +1,5 @@
 from domain.answers.answers_entity import AnswersEntity, Interviewed
+from infrastructure.exceptions.database_exception import DatabaseException
 from infrastructure.models import (
     AnswersModel,
     ElectionIssuesModel,
@@ -14,45 +15,30 @@ class AnswersRepository(BaseRepository):
         super().__init__(model=model)
 
     def create(self, data: AnswersEntity) -> AnswersModel | None:
-        data_answers = data.model_dump()
+        try:
+            data_answers = data.model_dump()
 
-        election_issue_id = data_answers.get('issue_id')
-        del data_answers['issue_id']
+            interview_data = data_answers['interviewed']
+            del data_answers['interviewed']
 
-        instance_election_issue = (
-            self.db.query(ElectionIssuesModel)
-            .filter_by(id=election_issue_id)
-            .first()
-        )
-        if not instance_election_issue:
-            raise ValueError('Instance of election issue not found')
+            questions_data = data_answers['questions_answers']
+            del data_answers['questions_answers']
 
-        user_id = data_answers.get('user_id')
-        del data_answers['user_id']
+            instance_interviewed = InterviewedModel(**interview_data)
+            self.db.add(instance_interviewed)
 
-        instance_user = self.db.query(UsersModel).filter_by(id=user_id)
-        if not instance_user:
-            raise ValueError('Instance of user not found')
+            instance_answers = AnswersModel(**data_answers)
+            instance_answers.interviewed_id = instance_interviewed.id
 
-        interviewed_data = data_answers.get('interviewed')
-        del data_answers['interviewed']
+            for question_data in questions_data:
+                instance_questions = QuestionsAnswersModel(**question_data)
+                instance_answers.questions_answers.append(instance_questions)
+                self.db.add(instance_questions)
 
-        instance_interviewed = InterviewedModel(**interviewed_data)
-
-        questions_answers_data = data_answers.get('questions_answers')
-        del data_answers['questions_answers']
-
-        instance_answers = AnswersModel(**data_answers)
-
-        instance_answers.interviewed.append(instance_interviewed)
-
-        for question_answers_data in questions_answers_data:
-            instance_questions_answers = QuestionsAnswersModel(
-                **question_answers_data
-            )
-            instance_answers.questions_answer.append(
-                instance_questions_answers
-            )
-
-        self.db.add(instance_answers)
-        return self._extracted_from_update_5(instance_answers)
+            self.db.add(instance_answers)
+            return self._extracted_from_update_5(instance_answers)
+        except Exception as e:
+            name = AnswersModel.__name__.replace('Model', '')
+            raise DatabaseException(
+                message=f'{e} with id {id} not found', status_code=404
+            ) from e

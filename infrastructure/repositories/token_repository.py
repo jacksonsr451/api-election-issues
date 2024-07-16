@@ -15,7 +15,7 @@ class TokenRepository(BaseRepository):
     def check_token(self, token: str) -> bool:
         token_in_blacklist = (
             self.db.query(BlacklistTokenModel)
-            .filter(BlacklistTokenModel.token == token)
+            .filter_by(token=token)
             .first()
         )
 

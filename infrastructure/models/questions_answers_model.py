@@ -1,35 +1,22 @@
-from sqlalchemy import UUID, CheckConstraint, Column, ForeignKey, Text
-from sqlalchemy.orm import MappedColumn, relationship, validates
-
-from infrastructure.models import BaseModelSQL
-
+from sqlalchemy import Column, ForeignKey, Text, UUID, CheckConstraint
+from sqlalchemy.orm import relationship, validates
+from infrastructure.models.base_model_sql import BaseModelSQL
+from infrastructure.models.answers_model import answers_questions
 
 class QuestionsAnswersModel(BaseModelSQL):
     __tablename__ = 'questions_answers'
 
-    question_id: MappedColumn[str] = Column(
-        UUID(as_uuid=True), ForeignKey('questions.id'), nullable=False
-    )
-    option_id: MappedColumn[str] = Column(
-        UUID(as_uuid=True), ForeignKey('options.id'), nullable=True
-    )
-    response: MappedColumn[str] = Column(Text, nullable=True)
+    question_id = Column(UUID(as_uuid=True), ForeignKey('questions.id'), nullable=False)
+    option_id = Column(UUID(as_uuid=True), ForeignKey('options.id'), nullable=True)
+    response = Column(Text, nullable=True)
 
-    question = relationship(
-        'QuestionsModel',
-        back_populates='answer',
-    )
+    question = relationship('QuestionsModel', back_populates='answer')
+    option_answer = relationship('OptionsModel', back_populates='answer')
 
-    option_answer = relationship(
-        'OptionsModel',
-        back_populates='answer',
-    )
-
-    answer = relationship(
+    answers = relationship(
         'AnswersModel',
-        back_populates='questions_answer',
-        cascade='all, delete-orphan',
-        lazy='dynamic',
+        secondary=answers_questions,
+        back_populates='questions_answers',
     )
 
     __table_args__ = (
@@ -43,12 +30,8 @@ class QuestionsAnswersModel(BaseModelSQL):
     def validate_option_or_response(self, key, value):
         if key == 'option_id':
             if value is not None and self.response is not None:
-                raise ValueError(
-                    'Both option_id and response cannot be set simultaneously.'
-                )
+                raise ValueError('Both option_id and response cannot be set simultaneously.')
         elif key == 'response':
             if value is not None and self.option_id is not None:
-                raise ValueError(
-                    'Both option_id and response cannot be set simultaneously.'
-                )
+                raise ValueError('Both option_id and response cannot be set simultaneously.')
         return value
