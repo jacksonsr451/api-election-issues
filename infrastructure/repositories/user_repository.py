@@ -40,7 +40,7 @@ class UserRepository(BaseRepository):
                     )
                 roles.append(role)
 
-            if 'password' not in data:
+            if 'password' in data:
                 data['password'] = PasswordEncryptionService.encrypt_password(data['password'])
 
             create_data = UsersModel.from_model(**data)
@@ -72,7 +72,7 @@ class UserRepository(BaseRepository):
 
             data_dict = data.model_dump()
 
-            if 'password' not in data_dict:
+            if 'password' in data_dict:
                 data_dict['password'] = PasswordEncryptionService.encrypt_password(data_dict['password'])
 
             data_roles = data_dict.get('roles', [])
