@@ -3,6 +3,9 @@ from typing import Optional
 from sqlalchemy.orm import joinedload
 
 from domain.auth.user_entity import UserEntity
+from domain.auth.services.password_encryption_service import (
+    PasswordEncryptionService,
+)
 from infrastructure.exceptions.database_exception import DatabaseException
 from infrastructure.models import RolesModel, UsersModel, BaseModelSQL
 from infrastructure.repositories.base_repository import BaseRepository
@@ -37,6 +40,7 @@ class UserRepository(BaseRepository):
                     )
                 roles.append(role)
 
+            data['password'] = PasswordEncryptionService.encrypt_password('admin')
             create_data = UsersModel.from_model(**data)
             create_data.roles = roles
 
@@ -133,3 +137,4 @@ class UserRepository(BaseRepository):
             raise DatabaseException(
                 message=f'{e} with email: {email} not found', status_code=404
             ) from e
+
