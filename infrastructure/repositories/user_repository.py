@@ -3,6 +3,9 @@ from typing import Optional
 from sqlalchemy.orm import joinedload
 
 from domain.auth.user_entity import UserEntity
+from domain.auth.services.password_encryption_service import (
+    PasswordEncryptionService,
+)
 from infrastructure.exceptions.database_exception import DatabaseException
 from infrastructure.models import RolesModel, UsersModel, BaseModelSQL
 from infrastructure.repositories.base_repository import BaseRepository
@@ -37,6 +40,9 @@ class UserRepository(BaseRepository):
                     )
                 roles.append(role)
 
+            if 'password' not in data:
+                data['password'] = PasswordEncryptionService.encrypt_password('admin')
+
             create_data = UsersModel.from_model(**data)
             create_data.roles = roles
 
@@ -65,6 +71,9 @@ class UserRepository(BaseRepository):
                 raise ValueError('Instance not found')
 
             data_dict = data.model_dump()
+
+            if 'password' not in data_dict:
+                data_dict['password'] = PasswordEncryptionService.encrypt_password('admin')
 
             data_roles = data_dict.get('roles', [])
             del data_dict['roles']
