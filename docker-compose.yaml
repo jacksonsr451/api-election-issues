@@ -41,4 +41,4 @@ services:
 
 networks:
   election_issues_network:
-    external: true
+    driver: bridge
