@@ -10,6 +10,7 @@ origins = [
     'http://localhost:8080',
     'http://195.200.1.150:8080',
     'https://dataprevia.com.br',
+    'http://api-election-issues',
 ]
 
 app.add_middleware(
