@@ -10,8 +10,6 @@ services:
     restart: always
     env_file:
       - .env
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres/election_issues
     volumes:
       - .:/app
       - ./logs:/app/logs
