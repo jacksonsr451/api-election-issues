@@ -3,8 +3,7 @@ from datetime import datetime
 from typing import TypeVar
 
 from pydantic import BaseModel as BaseDataModel
-from sqlalchemy import TIMESTAMP, Column
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import TIMESTAMP, Column, UUID
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm.collections import InstrumentedList
 from sqlalchemy.orm.dynamic import AppenderQuery
