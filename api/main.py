@@ -9,6 +9,7 @@ origins = [
     'http://localhost:3000',
     'http://localhost:8080',
     'http://195.200.1.150:8080',
+    'http://195.200.1.150:8000',
     'https://dataprevia.com.br',
 ]
 
