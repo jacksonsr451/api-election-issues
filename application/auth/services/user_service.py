@@ -28,7 +28,7 @@ class UserService:
     def update_user(self, _id: str, user: UserUpdate) -> Dict[str, Any]:
         data: UserEntity = UserEntity(**user.model_dump())
         user_model: UsersModel | None = self.__repository.update(_id, data)
-        return user_model.to_schema(UserSchema).model_dump() | {"message": 'errors'}
+        return user_model.to_schema(UserSchema).model_dump()
 
     def update_password(
         self, _id: str, user: UpdateUserPassword

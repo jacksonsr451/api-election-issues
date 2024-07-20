@@ -72,8 +72,8 @@ class UserRepository(BaseRepository):
 
             data_dict = data.model_dump()
 
-            if 'password' in data_dict:
-                data_dict['password'] = PasswordEncryptionService.encrypt_password(data_dict['password'])
+            # if 'password' in data_dict:
+            #     data_dict['password'] = PasswordEncryptionService.encrypt_password(data_dict['password'])
 
             data_roles = data_dict.get('roles', [])
             del data_dict['roles']
