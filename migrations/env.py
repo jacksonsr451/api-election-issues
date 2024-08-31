@@ -3,8 +3,9 @@ from logging.config import fileConfig
 from alembic import context
 from decouple import config as env_config
 from sqlalchemy import engine_from_config, pool
+from sqlmodel import SQLModel
 
-from infrastructure import models
+from api import models
 
 DATABASE_URL = f'postgresql+psycopg2://{env_config("POSTGRES_USER")}:{env_config("POSTGRES_PASSWORD")}@{env_config("POSTGRES_HOST")}/{env_config("POSTGRES_DB")}'
 
@@ -14,7 +15,7 @@ config.set_main_option("sqlalchemy.url", DATABASE_URL)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = models.BaseModelSQL.metadata
+target_metadata = SQLModel.metadata
 
 
 def run_migrations_offline() -> None:

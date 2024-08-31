@@ -27,6 +27,7 @@ pyjwt = "^2.8.0"
 python-jwt = "^4.1.0"
 pylint = "^3.2.5"
 sqlmodel = "^0.0.22"
+pytz = "^2024.1"
 
 
 [tool.poetry.group.dev.dependencies]
