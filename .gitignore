@@ -179,4 +179,4 @@ database
 !/migrations/versions/67513a9cbbbc_include_user_role.py
 .vscode
 
-data
+data/

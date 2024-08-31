@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   api-election-issues:
+    container_name: api-election_issues
     build:
       context: .
       dockerfile: Dockerfile
@@ -20,18 +21,25 @@ services:
     command: uvicorn api.main:app --host 0.0.0.0 --port 8080 --reload --workers 4
 
   postgres:
+    container_name: ${POSTGRES_HOST}
     image: postgres
     restart: always
     ports:
       - "5437:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=election_issues
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     networks:
       - election_issues_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   election_issues_network:
